@@ -275,11 +275,13 @@ local tagStrings = {
 	end]],
 
 	['soulshards'] = [[function()
-		if(IsPlayerSpell(WARLOCK_SOULBURN)) then
-			local num = UnitPower('player', SPELL_POWER_SOUL_SHARDS)
-			if(num > 0) then
-				return num
-			end
+		if(not isBetaClient and not IsPlayerSpell(WARLOCK_SOULBURN)) then
+			return
+		end
+
+		local num = UnitPower('player', SPELL_POWER_SOUL_SHARDS)
+		if(num > 0) then
+			return num
 		end
 	end]],
 
@@ -411,9 +413,11 @@ local tagEvents = {
 
 if(isBetaClient) then
 	tagEvents['arcanecharges'] = 'UNIT_POWER SPELLS_CHANGED'
+	tagEvents['soulshards'] = 'UNIT_POWER'
 	tagEvents['chi'] = 'UNIT_POWER SPELLS_CHANGED'
 else
 	tagEvents['shadoworbs'] = 'UNIT_POWER SPELLS_CHANGED'
+	tagEvents['soulshards'] = 'UNIT_POWER SPELLS_CHANGED'
 	tagEvents['chi'] = 'UNIT_POWER'
 end
 
