@@ -155,7 +155,6 @@ local Enable = function(self, unit)
 			element:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
 		end
 
-		MonkStaggerBar.Show = MonkStaggerBar.Hide
 		MonkStaggerBar:UnregisterEvent'PLAYER_ENTERING_WORLD'
 		MonkStaggerBar:UnregisterEvent'PLAYER_SPECIALIZATION_CHANGED'
 		MonkStaggerBar:UnregisterEvent'UNIT_DISPLAYPOWER'
@@ -173,8 +172,6 @@ local Disable = function(self)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 		self:UnregisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath)
 
-		MonkStaggerBar.Show = nil
-		MonkStaggerBar:Show()
 		MonkStaggerBar:UnregisterEvent'PLAYER_ENTERING_WORLD'
 		MonkStaggerBar:UnregisterEvent'PLAYER_SPECIALIZATION_CHANGED'
 		MonkStaggerBar:UnregisterEvent'UNIT_DISPLAYPOWER'
