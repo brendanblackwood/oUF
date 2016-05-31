@@ -298,15 +298,6 @@ local tagStrings = {
 		end
 	end]],
 
-	['shadoworbs'] = [[function()
-		if(IsPlayerSpell(95740)) then
-			local num = UnitPower('player', SPELL_POWER_SHADOW_ORBS)
-			if(num > 0) then
-				return num
-			end
-		end
-	end]],
-
 	['affix'] = [[function(u)
 		local c = UnitClassification(u)
 		if(c == 'minus') then
@@ -320,6 +311,15 @@ if(isBetaClient) then
 		local num = UnitPower('player', SPELL_POWER_ARCANE_CHARGES)
 		if(num > 0) then
 			return num
+		end
+	end]]
+else
+	tagStrings['shadoworbs'] = [[function()
+		if(IsPlayerSpell(95740)) then
+			local num = UnitPower('player', SPELL_POWER_SHADOW_ORBS)
+			if(num > 0) then
+				return num
+			end
 		end
 	end]]
 end
@@ -403,11 +403,12 @@ local tagEvents = {
 	['soulshards']          = 'UNIT_POWER SPELLS_CHANGED',
 	['holypower']           = 'UNIT_POWER SPELLS_CHANGED',
 	['chi']                 = 'UNIT_POWER',
-	['shadoworbs']          = 'UNIT_POWER SPELLS_CHANGED',
 }
 
 if(isBetaClient) then
 	tagEvents['arcanecharges'] = 'UNIT_POWER SPELLS_CHANGED'
+else
+	tagEvents['shadoworbs'] = 'UNIT_POWER SPELLS_CHANGED'
 end
 
 local unitlessEvents = {
