@@ -36,6 +36,13 @@
    
    -- Register with oUF
    self.Runes = Runes
+
+ Hooks
+
+ Override(self)           - Used to completely override the internal update
+                            function. Removing the table key entry will make the
+                            element fall-back to its internal function again.
+
 ]]
 
 if select(2, UnitClass("player")) ~= "DEATHKNIGHT" then return end
@@ -84,7 +91,7 @@ local OnUpdate = function(self, elapsed)
 	end
 end
 
-local UpdateRune = function(self, event, rid)
+local Update = function(self, event, rid)
 	local runes = self.Runes
 	local rune = runes[isBetaClient and rid or runemap[rid]]
 	if(not rune) then return end
@@ -112,19 +119,30 @@ local UpdateRune = function(self, event, rid)
 		rune:SetScript("OnUpdate", OnUpdate)
 	end
 
-	if(runes.PostUpdateRune) then
-		return runes:PostUpdateRune(rune, rid, start, duration, runeReady)
+	if(runes.PostUpdate) then
+		return runes:PostUpdate(rune, rid, start, duration, runeReady)
 	end
 end
 
 local Update = function(self, event)
 	for i=1, 6 do
-		UpdateRune(self, event, i)
+		Update(self, event, i)
+	end
+end
+
+local Path = function(self, event, ...)
+	local UpdateMethod = self.Runes.Override or Update
+	if(event == 'RUNE_POWER_UPDATE') then
+		return UpdateMethod(self, event, ...)
+	else
+		for index = 1, 6 do
+			UpdateMethod(self, event, index)
+		end
 	end
 end
 
 local ForceUpdate = function(element)
-	return Update(element.__owner, 'ForceUpdate')
+	return Path(element.__owner, 'ForceUpdate')
 end
 
 local Enable = function(self, unit)
@@ -156,7 +174,7 @@ local Enable = function(self, unit)
 			end
 		end
 
-		self:RegisterEvent("RUNE_POWER_UPDATE", UpdateRune, true)
+		self:RegisterEvent("RUNE_POWER_UPDATE", Path, true)
 
 		if(not isBetaClient) then
 			self:RegisterEvent("RUNE_TYPE_UPDATE", UpdateType, true)
@@ -167,11 +185,11 @@ local Enable = function(self, unit)
 end
 
 local Disable = function(self)
-	self:UnregisterEvent("RUNE_POWER_UPDATE", UpdateRune)
+	self:UnregisterEvent("RUNE_POWER_UPDATE", Path)
 
 	if(not isBetaClient) then
 		self:UnregisterEvent("RUNE_TYPE_UPDATE", UpdateType)
 	end
 end
 
-oUF:AddElement("Runes", Update, Enable, Disable)
+oUF:AddElement("Runes", Path, Enable, Disable)
